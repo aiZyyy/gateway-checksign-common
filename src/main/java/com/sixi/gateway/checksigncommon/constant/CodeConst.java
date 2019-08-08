@@ -91,7 +91,4 @@ public class CodeConst {
     public static final String RSP_MSG_INVALID_METHOD = "不存在方法名,检查入参method是否正确";
 
     public static final String RSP_MSG_INVALID_HTTP_METHOD = "不支持的Http Method方法";
-
-
-
 }
