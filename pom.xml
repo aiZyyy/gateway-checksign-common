@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sixi.gateway</groupId>
-    <artifactId>gateway-checksign-service</artifactId>
+    <artifactId>gateway-checksign-common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -13,22 +13,17 @@
 
     <parent>
         <groupId>com.sixi.micro</groupId>
-        <artifactId>sixi-micro-service-parent</artifactId>
+        <artifactId>sixi-micro-service-app-parent</artifactId>
         <version>2.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <dependencies>
-
         <!-- https://mvnrepository.com/artifact/commons-pool/commons-pool -->
         <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
             <version>1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 </project>
