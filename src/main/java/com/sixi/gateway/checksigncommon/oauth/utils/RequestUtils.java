@@ -35,7 +35,7 @@ public class RequestUtils {
      * @param timestamp  时间戳
      * @param bizContent 请求参数
      */
-    public static String CheckSignature(String url, String appId, String signType, String charset, String method, String timestamp, String bizContent,String privateKey) throws IOException {
+    public static String checkSignature(String url, String appId, String signType, String charset, String method, String timestamp, String bizContent,String privateKey) throws IOException {
 
         String body = "";
         // 生成签名
