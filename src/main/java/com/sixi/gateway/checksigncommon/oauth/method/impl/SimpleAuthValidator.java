@@ -122,8 +122,8 @@ public class SimpleAuthValidator implements AuthValidator {
      */
     protected void validateTimestamp(AuthMessage message, long timestamp, long currentTimeMsec) throws
             AuthProblemException {
-        long min = (currentTimeMsec - maxTimestampAgeMsec + 500) / 1000L;
-        long max = (currentTimeMsec + maxTimestampAgeMsec + 500) / 1000L;
+        long min = (currentTimeMsec - maxTimestampAgeMsec + 500);
+        long max = (currentTimeMsec + maxTimestampAgeMsec + 500);
         if (timestamp < min || max < timestamp) {
             AuthProblemException problem = new AuthProblemException(Auth.Problems.TIMESTAMP_REFUSED);
             problem.setParameter(Auth.Problems.OAUTH_ACCEPTABLE_TIMESTAMPS, min + "-" + max);
