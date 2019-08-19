@@ -3,6 +3,7 @@ package com.sixi.gateway.checksigncommon.oauth.method.impl;
 import com.sixi.gateway.checksigncommon.oauth.Auth;
 import com.sixi.gateway.checksigncommon.oauth.exception.AuthProblemException;
 import com.sixi.gateway.checksigncommon.oauth.method.AuthNonces;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -33,11 +34,11 @@ public class SimpleAuthNonces implements AuthNonces {
     }
 
     @Override
-    public void validateNonce(long timestamp, String appId,String nonce)
+    public void validateNonce(long timestamp, String appId,String nonce, RedisTemplate<String, String> redisTemplate)
             throws AuthProblemException {
 
         UsedNonce usedNonce = new UsedNonce(timestamp,appId,nonce);
-        boolean isValid = false;
+        boolean isValid;
         synchronized (this.usedNonces) {
             isValid = this.usedNonces.add(usedNonce);
         }
