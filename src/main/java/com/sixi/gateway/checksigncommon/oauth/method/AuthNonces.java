@@ -1,6 +1,7 @@
 package com.sixi.gateway.checksigncommon.oauth.method;
 
 import com.sixi.gateway.checksigncommon.oauth.exception.AuthProblemException;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * @Author: ZY
@@ -12,10 +13,12 @@ public interface AuthNonces {
 
     /**
      * 校验nonce 是否存在重复
+     *
      * @param timestamp 时间戳
-     * @param appId appId
-     * @param nonce 随机变量
+     * @param appId     appId
+     * @param nonce     随机变量
+     * @param redisTemplate redis模板
      * @throws AuthProblemException nonce 失败原因
      */
-    void validateNonce(long timestamp, String appId, String nonce) throws AuthProblemException;
+    void validateNonce(long timestamp, String appId, String nonce, RedisTemplate<String, String> redisTemplate) throws AuthProblemException;
 }
