@@ -3,6 +3,7 @@ package com.sixi.gateway.checksigncommon.oauth.method;
 import com.sixi.gateway.checksigncommon.oauth.AuthMessage;
 import com.sixi.gateway.checksigncommon.oauth.domain.AuthConsumer;
 import com.sixi.gateway.checksigncommon.oauth.exception.AuthException;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /**
  * @Author: ZY
@@ -17,5 +18,5 @@ public interface AuthValidator {
      * @param consumer 授权接入应用
      * @throws AuthException 非法授权
      */
-    void validateMessage(AuthMessage message, AuthConsumer consumer) throws AuthException;
+    void validateMessage(AuthMessage message, AuthConsumer consumer, RedisTemplate<String, String> redisTemplate) throws AuthException;
 }

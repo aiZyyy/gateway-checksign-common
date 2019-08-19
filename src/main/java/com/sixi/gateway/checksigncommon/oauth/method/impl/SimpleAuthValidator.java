@@ -9,6 +9,7 @@ import com.sixi.gateway.checksigncommon.oauth.exception.AuthProblemException;
 import com.sixi.gateway.checksigncommon.oauth.method.AuthNonces;
 import com.sixi.gateway.checksigncommon.oauth.method.AuthValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -75,14 +76,14 @@ public class SimpleAuthValidator implements AuthValidator {
      * @param maxTimestampAgeMsec 最大允许时间差
      */
     public SimpleAuthValidator(AuthNonces nonces, long maxTimestampAgeMsec) {
-        this.maxTimestampAgeMsec = maxTimestampAgeMsec;
         this.authNonces = nonces;
+        this.maxTimestampAgeMsec = maxTimestampAgeMsec;
     }
 
     @Override
-    public void validateMessage(AuthMessage message, AuthConsumer consumer) throws AuthException {
+    public void validateMessage(AuthMessage message, AuthConsumer consumer, RedisTemplate<String, String> redisTemplate) throws AuthException {
         checkSingleParameters(message);
-        validateTimestampAndNonce(message);
+        validateTimestampAndNonce(message, redisTemplate);
         validateSignature(message, consumer);
     }
 
@@ -103,12 +104,12 @@ public class SimpleAuthValidator implements AuthValidator {
      * @param message 消息体
      * @throws AuthProblemException 客户端时间误差超过最大允许区间，或nonce 在最大允许时间区间内存在重放，则抛出异常
      */
-    private void validateTimestampAndNonce(AuthMessage message) throws AuthProblemException {
+    private void validateTimestampAndNonce(AuthMessage message, RedisTemplate<String, String> redisTemplate) throws AuthProblemException {
 
         long timestamp = Long.parseLong(message.getParameter(Auth.OAUTH_TIMESTAMP));
         long now = currentTimeMsec();
         validateTimestamp(message, timestamp, now);
-        validateNonce(message, timestamp, now);
+        validateNonce(message, timestamp, now, redisTemplate);
     }
 
 
@@ -140,11 +141,11 @@ public class SimpleAuthValidator implements AuthValidator {
      * @param currentTimeMsec 当前时间
      * @throws AuthProblemException nonce 在最大允许时间区间内存在重放，则抛出异常
      */
-    protected void validateNonce(AuthMessage message, long timestamp, long currentTimeMsec) throws
+    protected void validateNonce(AuthMessage message, long timestamp, long currentTimeMsec, RedisTemplate<String, String> redisTemplate) throws
             AuthProblemException {
         String appid = message.getParameter(Auth.OAUTH_APP_ID);
         String sequence = message.getParameter(Auth.OAUTH_SIGNATURE);
-        authNonces.validateNonce(timestamp, appid, sequence);
+        authNonces.validateNonce(timestamp, appid, sequence, redisTemplate);
     }
 
 
