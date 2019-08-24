@@ -12,7 +12,7 @@ import java.util.*;
  * @Author: ZY
  * @Date: 2019/8/6 17:27
  * @Version 1.0
- * @Description: OAuth工具类,AuthValidateFilter 使用OAuth对接入应用进行鉴权验证
+ * @Description: OAuth工具类, AuthValidateFilter 使用OAuth对接入应用进行鉴权验证
  */
 public class Auth {
     public static final String ENCODING = "UTF-8";
@@ -39,7 +39,8 @@ public class Auth {
     /**
      * 业务跟踪号
      **/
-    //public static final String OAUTH_SEQUENCE = "sequence";
+    public static final String OAUTH_SEQUENCE = "sequence";
+
     //public static final String OAUTH_NONCE = "oauth_nonce";
     //public static final String OAUTH_OPENID = "oauth_openid";
 
@@ -177,8 +178,9 @@ public class Auth {
 
     /**
      * 将value 进行URL编码
+     *
      * @param values 待编码字串列表
-     * @return  url
+     * @return url
      */
     public static String percentEncode(Iterable<String> values) {
         StringBuilder p = new StringBuilder();
@@ -193,8 +195,9 @@ public class Auth {
 
     /**
      * url 编码
-     * @param s  待url编码串
-     * @return  url
+     *
+     * @param s 待url编码串
+     * @return url
      */
     public static String percentEncode(String s) {
         if (s == null) {
@@ -212,6 +215,7 @@ public class Auth {
 
     /**
      * url 解码
+     *
      * @param s 待url解码串
      * @return 明文
      */

@@ -2,10 +2,13 @@ package com.sixi.gateway.checksigncommon.oauth.utils;
 
 import org.apache.commons.codec.binary.Base64;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -20,12 +23,12 @@ public class RSAUtils {
     /**
      * 非对称密钥算法
      */
-    public static final String KEY_ALGORITHM="RSA";
+    public static final String KEY_ALGORITHM = "RSA";
 
     /**
      * 密钥长度，DH算法的默认密钥长度是1024
      * 密钥长度必须是64的倍数，在512到65536位之间
-     * */
+     */
     private static final int KEY_SIZE = 1024;
 
     /**
@@ -71,75 +74,67 @@ public class RSAUtils {
     }
 
     /**
-     * 公钥解密
+     * 得到公钥
      *
-     * @param publicKeyText
-     * @param text
-     * @return
+     * @param publicKey 密钥字符串（经过base64编码）
      * @throws Exception
      */
-    public static String decryptByPublicKey(String publicKeyText, String text) throws Exception {
-        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKeyText));
+    public static RSAPublicKey getPublicKey(String publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        // 通过X509编码的Key指令获得公钥对象
         KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-        PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec);
-        Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, publicKey);
-        byte[] result = cipher.doFinal(Base64.decodeBase64(text));
-        return new String(result);
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKey));
+        RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(x509KeySpec);
+        return key;
+    }
+
+    /**
+     * 得到私钥pkcs8
+     *
+     * @param privateKey 密钥字符串（经过base64编码）
+     * @throws Exception
+     */
+    public static RSAPrivateKey getPrivateKey(String privateKey)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        // 通过PKCS#8编码的Key指令获得私钥对象
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateKey));
+        RSAPrivateKey key = (RSAPrivateKey) keyFactory.generatePrivate(pkcs8KeySpec);
+        return key;
     }
 
     /**
      * 私钥加密
      *
-     * @param privateKeyText
-     * @param text
-     * @return
-     * @throws Exception
+     * @throws BadPaddingException 
+     * @throws IllegalBlockSizeException 
      */
-    public static String encryptByPrivateKey(String privateKeyText, String text) throws Exception {
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateKeyText));
-        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-        PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-        Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-        byte[] result = cipher.doFinal(text.getBytes());
-        return Base64.encodeBase64String(result);
+    public static byte[] encrtpyByPrivateKey(byte[] bb, PrivateKey key) throws IllegalBlockSizeException, BadPaddingException {
+        byte[] doFinal = null;
+        try {
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            doFinal = cipher.doFinal(bb);
+        } catch (Exception e) {
+        }
+        return doFinal;
     }
 
     /**
-     * 私钥解密
+     * 使用公钥解密
      *
-     * @param privateKeyText
-     * @param text
      * @return
-     * @throws Exception
+     * @throws NoSuchAlgorithmException
+     * @return 
      */
-    public static String decryptByPrivateKey(String privateKeyText, String text) throws Exception {
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec5 = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateKeyText));
-        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-        PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec5);
-        Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        byte[] result = cipher.doFinal(Base64.decodeBase64(text));
-        return new String(result);
+    public static byte[] decodePublicKey(byte[] b, PublicKey key) {
+        byte[] doFinal = null;
+        try {
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            doFinal = cipher.doFinal(b);
+        } catch (Exception e) {
+// TODO: handle exception
+        }
+        return doFinal;
     }
-
-    /**
-     * 公钥加密
-     *
-     * @param publicKeyText
-     * @param text
-     * @return
-     */
-    public static String encryptByPublicKey(String publicKeyText, String text) throws Exception {
-        X509EncodedKeySpec x509EncodedKeySpec2 = new X509EncodedKeySpec(Base64.decodeBase64(publicKeyText));
-        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
-        PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec2);
-        Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        byte[] result = cipher.doFinal(text.getBytes());
-        return Base64.encodeBase64String(result);
-    }
-
-
 }

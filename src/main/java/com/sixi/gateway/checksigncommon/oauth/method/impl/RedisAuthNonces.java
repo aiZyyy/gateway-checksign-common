@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit;
 public class RedisAuthNonces implements AuthNonces {
 
     /**
-     * 前端时间差最大允许15分钟，单位秒
+     * 前端时间差最大允许30分钟，单位秒
      **/
-    public static final long DEFAULT_MAX_TIMESTAMP_AGE = 15 * 60;
+    public static final long DEFAULT_MAX_TIMESTAMP_AGE = 30 * 60;
 
 
     /**
@@ -44,7 +44,7 @@ public class RedisAuthNonces implements AuthNonces {
     @Override
     public void validateNonce(long timestamp, String appId, String nonce, RedisTemplate<String, String> redisTemplate) throws AuthProblemException {
 
-        String nonceName = String.format(format, String.valueOf(timestamp), appId, nonce);
+        String nonceName = String.format(format, appId, nonce,timestamp);
         Boolean isValid = redisTemplate.opsForValue().setIfAbsent(nonceName, "n", maxTimestampAgeMsec, TimeUnit.SECONDS);
         if (!isValid) {
             throw new AuthProblemException(Auth.Problems.NONCE_USED);

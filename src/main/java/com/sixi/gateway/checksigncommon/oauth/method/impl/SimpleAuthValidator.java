@@ -33,7 +33,7 @@ public class SimpleAuthValidator implements AuthValidator {
      * 发现有部份用户的时间不正确（证实用户估计调快手机时间）
      * 请求的时间差 由原来的5分钟修改为为前后各30分钟,
      */
-    public static final long DEFAULT_MAX_TIMESTAMP_AGE = 30 * 60 * 1000L;
+    public static final long DEFAULT_MAX_TIMESTAMP_AGE = 15 * 60 * 1000L;
     public static final long DEFAULT_TIMESTAMP_AGE = DEFAULT_MAX_TIMESTAMP_AGE;
 
 
@@ -47,7 +47,7 @@ public class SimpleAuthValidator implements AuthValidator {
     private static Set<String> constructSingleParameters() {
         Set<String> s = new HashSet<String>();
         for (String p : new String[]{Auth.OAUTH_APP_ID, Auth.OAUTH_SIGNATURE,
-                Auth.OAUTH_TIMESTAMP, Auth.OAUTH_SIGN_TYPE}) {
+                Auth.OAUTH_TIMESTAMP, Auth.OAUTH_SIGN_TYPE, Auth.OAUTH_SEQUENCE}) {
             s.add(p);
         }
         return Collections.unmodifiableSet(s);
@@ -123,8 +123,8 @@ public class SimpleAuthValidator implements AuthValidator {
      */
     protected void validateTimestamp(AuthMessage message, long timestamp, long currentTimeMsec) throws
             AuthProblemException {
-        long min = (currentTimeMsec - maxTimestampAgeMsec + 500);
-        long max = (currentTimeMsec + maxTimestampAgeMsec + 500);
+        long min = (currentTimeMsec - maxTimestampAgeMsec);
+        long max = (currentTimeMsec + maxTimestampAgeMsec);
         if (timestamp < min || max < timestamp) {
             AuthProblemException problem = new AuthProblemException(Auth.Problems.TIMESTAMP_REFUSED);
             problem.setParameter(Auth.Problems.OAUTH_ACCEPTABLE_TIMESTAMPS, min + "-" + max);
@@ -144,7 +144,7 @@ public class SimpleAuthValidator implements AuthValidator {
     protected void validateNonce(AuthMessage message, long timestamp, long currentTimeMsec, RedisTemplate<String, String> redisTemplate) throws
             AuthProblemException {
         String appid = message.getParameter(Auth.OAUTH_APP_ID);
-        String sequence = message.getParameter(Auth.OAUTH_SIGNATURE);
+        String sequence = message.getParameter(Auth.OAUTH_SEQUENCE);
         authNonces.validateNonce(timestamp, appid, sequence, redisTemplate);
     }
 

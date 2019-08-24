@@ -35,14 +35,14 @@ public class RequestUtils {
      * @param timestamp  时间戳
      * @param bizContent 请求参数
      */
-    public static String checkSignature(String url, String appId, String signType, String charset, String method, String timestamp, String bizContent,String privateKey) throws IOException {
+    public static String checkSignature(String url, String appId, String signType, String charset, String method, String timestamp, String bizContent, String privateKey) throws IOException {
 
         String body = "";
         // 生成签名
         AuthMessage authMessage = new AuthMessage();
         authMessage.addParameter("app_id", appId);
-        authMessage.addParameter("biz_content",bizContent);
-        authMessage.addParameter("timestamp",timestamp);
+        authMessage.addParameter("biz_content", bizContent);
+        authMessage.addParameter("timestamp", timestamp);
         authMessage.addParameter("sign_type", signType);
         authMessage.addParameter("charset", charset);
         authMessage.addParameter("method", method);
@@ -64,7 +64,7 @@ public class RequestUtils {
         s.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
         //设置参数到请求对象中
         httpPost.setEntity(s);
-        System.out.println("请求地址："+url);
+        System.out.println("请求地址：" + url);
         httpPost.setHeader("Content-type", "application/json");
         httpPost.setHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
         //执行请求操作，并拿到结果（同步阻塞）
