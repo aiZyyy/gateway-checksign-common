@@ -35,11 +35,12 @@ public class RequestUtils {
      * @param timestamp  时间戳
      * @param bizContent 请求参数
      */
-    public static String checkSignature(String url, String appId, String signType, String charset, String method, String timestamp, String bizContent, String privateKey) throws IOException {
+    public static String checkSignature(String url, String sequence,String appId, String signType, String charset, String method, String timestamp, String bizContent, String privateKey) throws IOException {
 
         String body = "";
         // 生成签名
         AuthMessage authMessage = new AuthMessage();
+        authMessage.addParameter("sequence",sequence);
         authMessage.addParameter("app_id", appId);
         authMessage.addParameter("biz_content", bizContent);
         authMessage.addParameter("timestamp", timestamp);
@@ -52,6 +53,7 @@ public class RequestUtils {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         JSONObject jsonObject = new JSONObject();
+        jsonObject.append("sequence", sequence);
         jsonObject.append("app_id", appId);
         jsonObject.append("sign_type", signType);
         jsonObject.append("charset", charset);
