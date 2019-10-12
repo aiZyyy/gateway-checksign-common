@@ -19,7 +19,9 @@ import java.io.UnsupportedEncodingException;
  * BaseString拼上AppSecret得到待签名串,使用MD5对待签名串进行摘要
  */
 public class MD5Signer extends AbstractAuthSignatureMethod {
-    /** ISO-8859-1 or US-ASCII would work, too. */
+    /**
+     * ISO-8859-1 or US-ASCII would work, too.
+     */
     private static final String ENCODING = Auth.ENCODING;
 
     @Override
@@ -32,8 +34,9 @@ public class MD5Signer extends AbstractAuthSignatureMethod {
     protected boolean isValid(String signature, String baseString, AuthConsumer key) throws AuthException {
         baseString = baseString.concat(key.getSecret());
         byte[] expected = computeSignature(baseString);
+        System.out.println("生成签名为:" + Hex.encodeHexString(computeSignature(baseString)));
         try {
-            byte[]  actual = Hex.decodeHex(signature);
+            byte[] actual = Hex.decodeHex(signature);
             return equals(expected, actual);
         } catch (DecoderException e) {
             throw new AuthProblemException(Auth.Problems.CHARSET_INVALID);
@@ -41,7 +44,7 @@ public class MD5Signer extends AbstractAuthSignatureMethod {
     }
 
     public byte[] computeSignature(String baseString) {
-        byte[] b ;
+        byte[] b;
         try {
             b = baseString.getBytes(ENCODING);
         } catch (UnsupportedEncodingException e) {

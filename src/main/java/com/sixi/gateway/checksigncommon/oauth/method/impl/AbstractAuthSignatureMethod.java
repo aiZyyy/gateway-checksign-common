@@ -153,7 +153,7 @@ public abstract class AbstractAuthSignatureMethod implements ISignatureMethod {
         if (parameters == null) {
             return "";
         }
-        List<ComparableParameter> p = new ArrayList<ComparableParameter>(parameters.size());
+        List<ComparableParameter> p = new ArrayList<>(parameters.size());
         for (Map.Entry<String, String> parameter : parameters) {
             //sign的字段不需要加入到待签名串
             if(!parameter.getKey().equals(getSignatureName())){

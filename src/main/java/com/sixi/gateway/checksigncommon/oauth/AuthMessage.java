@@ -1,6 +1,9 @@
 package com.sixi.gateway.checksigncommon.oauth;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sixi.gateway.checksigncommon.oauth.domain.AuthConsumer;
 import com.sixi.gateway.checksigncommon.oauth.exception.AuthException;
 import com.sixi.gateway.checksigncommon.oauth.exception.AuthProblemException;
@@ -26,14 +29,14 @@ public class AuthMessage {
         parameters = new ArrayList<Map.Entry<String, String>>();
     }
 
-    public AuthMessage(Collection<? extends Map.Entry<String, ?>> parameters) {
+    public AuthMessage(JSONObject parameters) {
         if (parameters == null) {
             this.parameters = new ArrayList<Map.Entry<String, String>>();
         } else {
             this.parameters = new ArrayList<Map.Entry<String, String>>(parameters.size());
-            for (Map.Entry<String, ?> p : parameters) {
-                this.parameters.add(new Auth.Parameter(toString(p.getKey()), toString(p.getValue())));
-            }
+            parameters.forEach((s, o) -> {
+                this.parameters.add(new Auth.Parameter(s, o instanceof String ? parameters.getString(s) : JSON.toJSONString(o, SerializerFeature.MapSortField, SerializerFeature.WriteMapNullValue)));
+            });
         }
     }
 
@@ -70,20 +73,20 @@ public class AuthMessage {
         return getParameterMap().get(name);
     }
 
-    public int getIntParameter(String name){
-        String value =  getParameterMap().get(name);
-        if(value != null){
+    public int getIntParameter(String name) {
+        String value = getParameterMap().get(name);
+        if (value != null) {
             return Integer.parseInt(value);
-        }else{
+        } else {
             return 0;
         }
     }
 
-    public long getLongParameter(String name){
-        String value =  getParameterMap().get(name);
-        if(value != null){
+    public long getLongParameter(String name) {
+        String value = getParameterMap().get(name);
+        if (value != null) {
             return Long.parseLong(value);
-        }else{
+        } else {
             return 0;
         }
     }

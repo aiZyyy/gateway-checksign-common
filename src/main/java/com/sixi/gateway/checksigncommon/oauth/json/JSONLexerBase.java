@@ -1,5 +1,5 @@
 /**
- * Project Name:framework-webapi
+ * Project Name:webapi-webapi
  * File Name:JSONLexerBase.java
  * Package Name:com.bus.card.utils.json
  *  
@@ -360,6 +360,16 @@ public abstract class JSONLexerBase implements JsonLexer {
 
 			if (scan == ch) {
 				scan = popScanStack();
+
+				//转义的话，将ch添加到sbuf中
+				if(hasSpecial){
+					if (sp == sbuf.length) {
+						putChar(ch);
+					} else {
+						sbuf[sp++] = ch;
+					}
+				}
+
 				if (scan == TOP) {
 					// 无元素了
 					break;
@@ -369,11 +379,11 @@ public abstract class JSONLexerBase implements JsonLexer {
 						continue;
 					}
 
-					if (sp == sbuf.length) {
-						putChar(ch);
-					} else {
-						sbuf[sp++] = ch;
-					}
+//					if (sp == sbuf.length) {
+//						putChar(ch);
+//					} else {
+//						sbuf[sp++] = ch;
+//					}
 					continue;
 				}
 			}
@@ -404,8 +414,9 @@ public abstract class JSONLexerBase implements JsonLexer {
 						System.arraycopy(sbuf, 0, newsbuf, 0, sbuf.length);
 						sbuf = newsbuf;
 					}
-
-					copyTo(np + 1, sp, sbuf);
+					sp++;
+					copyTo(np , sp, sbuf);
+					//copyTo(np + 1, sp, sbuf);
 					// text.getChars(np + 1, np + 1 + sp, sbuf, 0);
 					// System.arraycopy(buf, np + 1, sbuf, 0, sp);
 				}
