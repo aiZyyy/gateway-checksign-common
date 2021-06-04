@@ -30,7 +30,7 @@
         <fastjson.version>1.2.55</fastjson.version>
         <commons.version>1.6</commons.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <httpclient.version>4.5.3</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <json.version>20190722</json.version>
         <codec.version>1.13</codec.version>
         <commons.lang3.version>3.9</commons.lang3.version>
